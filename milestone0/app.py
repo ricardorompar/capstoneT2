@@ -1,77 +1,67 @@
 import json
 import requests
-import pandas as pd
 import os
+from flask import Flask, request, jsonify
 from dotenv import load_dotenv #For retrieving the api key
+from datetime import date, timedelta
 
 # Load the environment variables from the .env file
 load_dotenv()
+API_KEY = os.getenv("ALPHA_VANTAGE_KEY")
 
-key = os.getenv("ALPHA_VANTAGE_KEY")
+app = Flask(__name__)
 
-start_date = "2024-02-15"
-end_date = "2024-02-29"
-tickerlist = ['AAPL', 'IBM', 'MSFT', 'GOOGL', 'AMZN']
+#read the user database and store in a dictionary:
+with open("user_database.json", 'r') as db:
+        db_dict = json.load(db)
 
-datalist = []
+def get_user_list(user_id):
+    #this function returns the list of symbols for a specific user
+    try:
+        return db_dict[user_id]
+    except KeyError:
+        print("User not found in database.")
 
-username = input('Enter username: ')
-password = input('Enter password: ')
+def get_last_weekday():
+    #this function retrieves the last weekday date to use it in the api call. Return has format "YYYY-MM-DD"
+    today = date.today()
+    if today.weekday()==0:  #if today is monday
+        delta = timedelta(days=3)
+    elif today.weekday()==6: #if today is sunday:
+        delta = timedelta(days=2)
+    else:   #any other day of the week
+        delta = timedelta(days=1)
+    return (today-delta).strftime("%Y-%m-%d")
 
-print("*" * 100)
-print(f"Welcome " + username + "!")
-print("")
-print("")
-print("Your portfolio")
-for ticker in range(len(tickerlist)):
-    print(f"{ticker + 1}  {tickerlist[ticker]}")
-print("")
-print("")
-print("*" * 100)
+@app.route("/api/portfolio")
+def get_portfolio():
+    userId = "user1" #change for different users
+    list_values = {}    #This dictionary will store the stock and last closing value like "STOCK":"123.45"
+    user_portfolio = get_user_list(user_id=userId)
+    for stock in user_portfolio:
+        #make the requests to the API and return the last closing value:
+        url = f"https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol={stock}&apikey={API_KEY}"
+        r = requests.get(url)
+        data = r.json()
+        #I only want the last closing value, so:
+        lcv = data["Time Series (Daily)"][get_last_weekday()]["4. close"]  #i know that there is the last closing value
+        list_values[stock] = lcv
+    return jsonify(list_values)
 
+@app.route("/api/portfolio/<stock>")
+def get_stock_value(stock):
+    url = f"https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol={stock}&apikey={API_KEY}"
+    r = requests.get(url)
+    data = r.json()
+    series = data['Time Series (Daily)']
+    #lets use the last 30 days:
+    start_date = (date.today()-timedelta(days=30)).strftime("%Y-%m-%d")
+    end_date = date.today().strftime("%Y-%m-%d")
+    filtered_data = {date: details for date, details in series.items() if start_date <= date <= end_date}   #this is from Percy's code
+    past_stock={}
+    past_stock["symbol"]=stock
+    past_stock["values_daily"]=filtered_data
+    return jsonify(past_stock)
 
-selection = input("Enter the number or ticker of the stock you want to see: ")
-start_date = input("Enter the start date (YYYY-MM-DD): ")
-end_date = input("Enter the end date (YYYY-MM-DD): ")
-
-print("*" * 100)
-if selection.isdigit():
-    print(f"Stock details for {tickerlist[int(selection) - 1]}")
-else:
-    print(f"Stock details for {selection}")
-
-print(f"Start date: {start_date}")
-print(f"End date: {end_date}")
-
-if selection.isdigit():
-    ticker = tickerlist[int(selection) - 1]
-else:
-    ticker = selection
-
-url = 'https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol='+ ticker + '&apikey=' + key
-r = requests.get(url)
-data = r.json()
-
-series = data['Time Series (Daily)']
-
-filtered_data = {date: details for date, details in series.items() if start_date <= date <= end_date}
-# print(filtered_data)
-
-
-
-
-df = pd.DataFrame.from_dict(filtered_data, orient='index')
-
-
-# Convert the index to datetime
-df.index = pd.to_datetime(df.index)
-
-# Optionally, you can rename columns to remove the numbers and spaces for easier access
-df.columns = [col.split(' ')[1] for col in df.columns]
-
-# Show the DataFrame
-print(df)
-#
-
-
-'https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=MSFT&apikey=9UGF0RQFVARJPFAD'
+if __name__ == "__main__":
+    app.run(debug = True)
