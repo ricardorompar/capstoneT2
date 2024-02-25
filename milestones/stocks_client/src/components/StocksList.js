@@ -1,4 +1,4 @@
-import {ListGroup, Card, Row, Col, Container, Spinner} from 'react-bootstrap';
+import {ListGroup, Card, Row, Col, Container, Spinner, Button} from 'react-bootstrap';
 import React, { useState, useEffect } from 'react';
 
 // username = "user1";
@@ -20,21 +20,28 @@ function StocksList() {
         .catch(error => console.error("Error fetching data: ", error));
     }, []);
 
+    // const [showComponent, setShowComponent] = useState(null);
+    // const handleClick = () => {
+    //     fetch(`http://localhost:5000/api/portfolio/${key}`)
+    //     .then(response => response.json())
+    // }
+
     return (
-        <Container className='min-vh-100 container-sm'>
+        <Container className='min-vh-100'>
             <h1>Your portfolio</h1>
-            <Card className='my-5'>
+            <Card className='my-5 w-75 m-auto'>
                 <Card.Header>User: {"user1"}</Card.Header>
                 <ListGroup variant='flush'>
                     {!list ? (
-                        <Spinner animation="border" />
+                        <Spinner className='my-5 mx-auto' animation="border" />
                     ):(
-                
                         Object.entries(list).map(([key, value]) =>( //this will map the contents of the json into a ListGroup.item
-                            <ListGroup.Item action href="http://localhost:5000/api/portfolio/" key={key}>
+                            <ListGroup.Item key={key}>
                                 <Row>
-                                    <Col className='fs-4 fw-bold'>{key}</Col>
-                                    <Col className='fs-5'>${value}</Col>
+                                    <Col xs={5} className='col-auto me-auto'>
+                                        <Button action href={"http://localhost:5000/api/portfolio/"+key} variant='outline-primary' className='fs-4 fw-bold'>{key}</Button>
+                                    </Col>
+                                    <Col className='fs-5 col-auto'>${value}</Col>
                                 </Row>
                             </ListGroup.Item>
                         ))
