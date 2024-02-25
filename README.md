@@ -23,13 +23,13 @@ Here are some screenshots:
 
 Nodejs server running locally in port 3000:
 
-![Untitled](README_src/Untitled%201.png)
+![Untitled](README_src/Untitled.png)
 
 The component in the center is the StocksList which does all the requests to the Flask server
 
 When the user clicks on a stock name the app displays the values from the last 30 days:
 
-![Untitled](README_src/Untitled%202.png)
+![Untitled](README_src/Untitled%201.png)
 
 The navbar and footer are just decorations for the moment. They don’t really provide any functionality.
 
