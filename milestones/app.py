@@ -2,6 +2,7 @@ import json
 import requests
 import os
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 from dotenv import load_dotenv #For retrieving the api key
 from datetime import date, timedelta
 
@@ -10,6 +11,7 @@ load_dotenv()
 API_KEY = os.getenv("ALPHA_VANTAGE_KEY")
 
 app = Flask(__name__)
+CORS(app)
 
 #read the user database and store in a dictionary:
 with open("user_database.json", 'r') as db:
