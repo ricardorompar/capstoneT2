@@ -35,6 +35,16 @@ def get_last_weekday():
         delta = timedelta(days=1)
     return (today-delta).strftime("%Y-%m-%d")
 
+def get_API_daily(stock, key):
+    try:
+        url = f"https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol={stock}&apikey={key}"
+        r = requests.get(url)
+        data = r.json()
+        return data
+    except:
+        print("Error fetching data from AlphaVantage")
+        return {}
+
 @app.route("/api/portfolio")
 def get_portfolio():
     userId = "user1" #change for different users
@@ -42,20 +52,24 @@ def get_portfolio():
     user_portfolio = get_user_list(user_id=userId)
     for stock in user_portfolio:
         #make the requests to the API and return the last closing value:
-        url = f"https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol={stock}&apikey={API_KEY}"
-        r = requests.get(url)
-        data = r.json()
+        data = get_API_daily(stock, API_KEY)
         #I only want the last closing value, so:
-        lcv = data["Time Series (Daily)"][get_last_weekday()]["4. close"]  #i know that there is the last closing value
+        try:
+            lcv = data["Time Series (Daily)"][get_last_weekday()]["4. close"]  #i know that there is the last closing value
+        except:
+            print("Error in data")
+            lcv = {}
         list_values[stock] = lcv
     return jsonify(list_values)
 
 @app.route("/api/portfolio/<stock>")
 def get_stock_value(stock):
-    url = f"https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol={stock}&apikey={API_KEY}"
-    r = requests.get(url)
-    data = r.json()
-    series = data['Time Series (Daily)']
+    data = get_API_daily(stock, API_KEY)
+    try:
+        series = data['Time Series (Daily)']
+    except:
+        print("Error in data")
+        series = {}
     #lets use the last 30 days:
     start_date = (date.today()-timedelta(days=30)).strftime("%Y-%m-%d")
     end_date = date.today().strftime("%Y-%m-%d")
