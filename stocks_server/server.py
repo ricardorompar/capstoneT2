@@ -24,29 +24,28 @@ def get_user_list(user_id):
     except KeyError:
         print("User not found in database.")
 
-def get_last_weekday():
+def get_last_weekday()->str:
     #this function retrieves the last weekday date to use it in the api call. Return has format "YYYY-MM-DD"
     today = date.today()
-    if today.weekday()==0:  #if today is monday
-        delta = timedelta(days=3)
-    elif today.weekday()==6: #if today is sunday:
-        delta = timedelta(days=2)
+    if today.weekday()% 6==0:  #this if encapsulates the 2 days (0 and 6) in a single line. Ricardo did this on his own during class
+        deltas = {0:3, 6:2} #this dict establishes the amount of days to be subtracted (other than 1) form the current date
+        delta = timedelta(deltas[today.weekday()])
     else:   #any other day of the week
         delta = timedelta(days=1)
     return (today-delta).strftime("%Y-%m-%d")
 
-def get_API_daily(stock, key):
+def get_API_daily(stock:str, key:str)->dict:
     try:
         url = f"https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol={stock}&apikey={key}"
         r = requests.get(url)
         data = r.json()
         return data
     except:
-        print("Error fetching data from AlphaVantage")
+        print("Error fetching data from AlphaVantage API")
         return {}
 
 @app.route("/api/portfolio")
-def get_portfolio():
+def get_portfolio() -> json:
     userId = "user1" #change for different users
     list_values = {}    #This dictionary will store the stock and last closing value like "STOCK":"123.45"
     user_portfolio = get_user_list(user_id=userId)
@@ -63,7 +62,7 @@ def get_portfolio():
     return jsonify(list_values)
 
 @app.route("/api/portfolio/<stock>")
-def get_stock_value(stock):
+def get_stock_value(stock: str) -> json:
     data = get_API_daily(stock, API_KEY)
     try:
         series = data['Time Series (Daily)']
@@ -80,4 +79,7 @@ def get_stock_value(stock):
     return jsonify(past_stock)
 
 if __name__ == "__main__":
-    app.run()
+    app.run(debug=True)
+
+
+#rr

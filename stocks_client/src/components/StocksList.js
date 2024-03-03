@@ -5,9 +5,7 @@ import ListComponent from './ListComponent';
 function StocksList() {
     const [list, setList] = useState(null);
     useEffect(()=>{
-        fetch('http://localhost:5000/api/portfolio')
-        .then(response => response.json())
-        .then(list => setList(list))
+        fetch('http://localhost:5000/api/portfolio').then(response => response.json()).then(list => setList(list))
         .catch(error => console.error("Error fetching data: ", error));
     }, []);
 
