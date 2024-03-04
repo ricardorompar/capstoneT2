@@ -17,7 +17,7 @@ function PastValues({data, showPValues}) {  //this component receives a key as a
                                         <p className='fs-3'>{date}</p>
                                         {   //in this case the value is another object:
                                             Object.entries(values).map(([key, price]) =>(
-                                                <Row>
+                                                <Row key={key}>
                                                     <Col className='col-auto me-auto'>{key}</Col>
                                                     {
                                                         (key=="5. volume")?(    //if the value is the volume i dont want the dollar sign

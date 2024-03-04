@@ -79,7 +79,7 @@ def get_stock_value(stock: str) -> json:
     return jsonify(past_stock)
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run()
 
 
 #rr

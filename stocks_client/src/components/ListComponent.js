@@ -10,7 +10,7 @@ function ListComponent({itemKey, itemValue}) {
     const handleClick = () => {
         // Make the request to the server
         setShowPValues(true);
-        fetch(`http://localhost:5000/api/portfolio/${itemKey}`)
+        fetch(`https://mcsbt-integration-rickyr.nw.r.appspot.com/api/portfolio/${itemKey}`)
         .then(response => response.json())
         .then(data => {
             setData(data); // Log the data or do something with it
