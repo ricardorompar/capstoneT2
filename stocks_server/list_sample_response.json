@@ -1,7 +1,23 @@
 {
-    "AAPL": "184.37",
-    "IBM": "184.21",
-    "MSFT": "411.65",
-    "GOOGL": "144.09",
-    "AMZN": "174.58"
+    "total_port_val": 8888.88,
+    "AAPL":{
+        "num_stocks": 111,
+        "last_close": 111.11
+    },
+    "IBM": {
+        "num_stocks": 222,
+        "last_close": 222.11
+    },
+    "MSFT": {
+        "num_stocks": 333,
+        "last_close": 333.11
+    },
+    "GOOGL": {
+        "num_stocks": 444,
+        "last_close": 444.11
+    },
+    "AMZN": {
+        "num_stocks": 555,
+        "last_close": 555.11
+    }
 }
