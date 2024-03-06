@@ -55,10 +55,10 @@ Here are some screenshots of the app:
 
 List of stocks:
 
-![Untitled](Untitled%202.png)
+![Untitled](README_src/Untitled%202.png)
 
 Past values:
 
-![Untitled](Untitled%203.png)
+![Untitled](README_src/Untitled%203.png)
 
 Stay tuned for DB integration next week!
