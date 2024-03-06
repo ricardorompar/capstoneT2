@@ -94,16 +94,16 @@ def get_past_vals(stock:str, interval:str="daily") -> dict:
 #example: 
 @app.route("/api/portfolio")
 def create_portfolio() -> json:
-    userId = request.args.get("userId")
+    userId = request.args.get("userId", "user1")
+        
     # userId = "user1" #change for different users
     portfolio = {}    #This dictionary has the response from this endpoint as specified in the doesign
     portfolio["username"] = userId  #first item username
     total_port_val = 0
     user_portfolio = get_user_list(user_id=userId)
-
+    portfolio["portfolio"] = {} #another empty dict
     for stock, num_stocks in user_portfolio.items():
         #make the requests to the API and return the last closing value:
-        # data = get_API_1min(stock, API_KEY)
         data = get_past_vals(stock, "min60")
         #I only want the last closing value, so:
         try:
@@ -114,7 +114,7 @@ def create_portfolio() -> json:
 
         total_port_val += num_stocks*last_close    #compute total portfolio value: sum (num of stocks) x (last close)
 
-        portfolio[stock] = {
+        portfolio["portfolio"][stock] = {
             "num_stocks": num_stocks,
             "last_close": round(last_close, 2)
         }

@@ -14,7 +14,7 @@ function StocksNavbar() {
               <NavDropdown.Item href="https://www.alphavantage.co/documentation/">
                 AlphaVantage
               </NavDropdown.Item>
-              <NavDropdown.Item href="#linktoCP">Capstone Project</NavDropdown.Item>
+              <NavDropdown.Item href="https://github.com/ricardorompar/capstoneT2">Capstone Project</NavDropdown.Item>
               <NavDropdown.Divider />
               <NavDropdown.Item href="https://github.com/ricardorompar">
                 ricardorompar
