@@ -91,9 +91,11 @@ def get_past_vals(stock:str, interval:str="daily") -> dict:
         print("Error fetching data from AlphaVantage API")
         return {}
 
+#example: 
 @app.route("/api/portfolio")
 def create_portfolio() -> json:
-    userId = "user1" #change for different users
+    userId = request.args.get("userId")
+    # userId = "user1" #change for different users
     portfolio = {}    #This dictionary has the response from this endpoint as specified in the doesign
     portfolio["username"] = userId  #first item username
     total_port_val = 0
@@ -121,7 +123,8 @@ def create_portfolio() -> json:
 
 @app.route("/api/portfolio/<stock>")
 def get_stock_value(stock: str) -> json:
-    interval = request.args.get("interval") #this takes the query params. It turns out is very simple
+    interval = request.args.get("interval") #this takes the query params. It turns out it is very simple
+    # amount = request.args.get("amount")
     #inspo from https://stackoverflow.com/questions/11774265/how-do-you-access-the-query-string-in-flask-routes
     
     series = get_past_vals(stock, interval)  #by default it takes the daily values
@@ -129,7 +132,8 @@ def get_stock_value(stock: str) -> json:
     past_stock["symbol"]=stock
     try:
         #lets use the last 20 values
-        past_stock[f"values_{interval}"]=filter_amount(series, 10)
+        past_stock[f"values_{interval}"]=filter_amount(series, 20)
+        # past_stock[f"values_{interval}"]=filter_amount(series, int(amount))
         return jsonify(past_stock)
     
     except:
