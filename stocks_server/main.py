@@ -24,33 +24,69 @@ def get_user_list(user_id):
     except KeyError:
         print("User not found in database.")
 
-def get_last_value(data:dict) -> float:
+def get_last_close(time_series:dict) -> float:
+    '''
+    This function takes the time series from get_past_vals and outputs the last closing value of the serues
+    '''
     try:
-        time_series = data["Time Series (1min)"]
         keys = list(time_series.keys()) #get all the keys (date-time strings) and convert them to a list
-        keys.sort() #sort in chronological order to get the very last value
+        keys.sort() #sort in chronological order to get the very last values
         last_values = time_series[keys[-1]] # i know this is a dict that will have a key "4. close"
         return float(last_values["4. close"])
     except:
         print("Error getting time series from AV API response.")
         return float("nan")
 
-def get_API_daily(stock:str, key:str)->dict:
+def filter_amount(time_series:dict, size:int) -> dict:
+    '''
+    This function takes the same time series and outputs a smaller one containing only the amount of entries
+    specified. If its a daily series it takes only the info from the past {size} days.
+    '''
     try:
-        url = f"https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol={stock}&apikey={key}"
-        r = requests.get(url)
-        data = r.json()
-        return data
+        keys = list(time_series.keys()) #get all the keys (date-time strings) and convert them to a list
+        keys = keys[:size]  #take only the {size} first values
+        response = {key: time_series[key] for key in keys}    #beautiful dictionary comprehension
+        return response
     except:
-        print("Error fetching data from AlphaVantage API")
-        return {}
+        print("Error getting time series from AV API response.")
+        return float("nan")
 
-def get_API_1min(stock:str, key:str)->dict:
+
+def get_past_vals(stock:str, interval:str="daily") -> dict:
+    '''
+    This function gets the desired interval as a parameter: monthly, weekly, daily, min60, min30, min5, min1
+    from that i just build the query parameters for the AV API and then I build my url
+    i think this will be useful for selecting the interval of the past values
+    '''
+    global API_KEY  #i'll use the global variable instead
+    if interval == "monthly":   #every month
+        query_params = f"function=TIME_SERIES_MONTHLY&symbol={stock}&apikey={API_KEY}"
+        series_name = "Monthly Time Series"
+    elif interval == "weekly":  #every week
+        query_params = f"function=TIME_SERIES_WEEKLY&symbol={stock}&apikey={API_KEY}"
+        series_name = "Weekly Time Series"
+    elif interval == "daily": #every day (by default)
+        query_params = f"function=TIME_SERIES_DAILY&symbol={stock}&apikey={API_KEY}"
+        series_name = "Time Series (Daily)"
+    elif interval == "min60":   #every hour
+        query_params = f"function=TIME_SERIES_INTRADAY&symbol={stock}&interval=60min&apikey={API_KEY}"
+        series_name =  "Time Series (60min)"
+    elif interval == "min30":   #every 30 minutes
+        query_params = f"function=TIME_SERIES_INTRADAY&symbol={stock}&interval=30min&apikey={API_KEY}"
+        series_name =  "Time Series (30min)"
+    elif interval == "min5":   #every 5 minutes
+        query_params = f"function=TIME_SERIES_INTRADAY&symbol={stock}&interval=5min&apikey={API_KEY}"
+        series_name =  "Time Series (5min)"
+    elif interval == "min1":   #every 1 minute
+        query_params = f"function=TIME_SERIES_INTRADAY&symbol={stock}&interval=1min&apikey={API_KEY}"
+        series_name =  "Time Series (1min)"
+    #now i can build my api call with the full url:
     try:
-        url = f"https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol={stock}&interval=1min&apikey={key}"
+        url = f"https://www.alphavantage.co/query?{query_params}"
         r = requests.get(url)
         data = r.json()
-        return data
+        #i want to get rid of the metadata included in the json and only return the time series. That's what i use the series_name variable for:
+        return data[series_name]
     except:
         print("Error fetching data from AlphaVantage API")
         return {}
@@ -65,10 +101,11 @@ def create_portfolio() -> json:
 
     for stock, num_stocks in user_portfolio.items():
         #make the requests to the API and return the last closing value:
-        data = get_API_1min(stock, API_KEY)
+        # data = get_API_1min(stock, API_KEY)
+        data = get_past_vals(stock, "min60")
         #I only want the last closing value, so:
         try:
-            last_close = get_last_value(data)
+            last_close = get_last_close(data) #by default last value
         except:
             print("Error in data")
             last_close = float("nan") #error
@@ -84,16 +121,15 @@ def create_portfolio() -> json:
 
 @app.route("/api/portfolio/<stock>")
 def get_stock_value(stock: str) -> json:
-    data = get_API_daily(stock, API_KEY)
+    interval = request.args.get("interval") #this takes the query params. It turns out is very simple
+    #inspo from https://stackoverflow.com/questions/11774265/how-do-you-access-the-query-string-in-flask-routes
+    
+    series = get_past_vals(stock, interval)  #by default it takes the daily values
+    past_stock={}
+    past_stock["symbol"]=stock
     try:
-        series = data['Time Series (Daily)']
-        #lets use the last 30 days:
-        start_date = (date.today()-timedelta(days=30)).strftime("%Y-%m-%d")
-        end_date = date.today().strftime("%Y-%m-%d")
-        filtered_data = {date: details for date, details in series.items() if start_date <= date <= end_date}
-        past_stock={}
-        past_stock["symbol"]=stock
-        past_stock["values_daily"]=filtered_data
+        #lets use the last 20 values
+        past_stock[f"values_{interval}"]=filter_amount(series, 10)
         return jsonify(past_stock)
     
     except:

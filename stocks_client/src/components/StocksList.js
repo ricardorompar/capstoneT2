@@ -9,8 +9,12 @@ function StocksList() {
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
+
+    //const url = "https://mcsbt-integration-rickyr.nw.r.appspot.com/api/portfolio";
+    const url = "http://127.0.0.1:5000/api/portfolio";
+
     useEffect(()=>{
-        fetch('https://mcsbt-integration-rickyr.nw.r.appspot.com/api/portfolio').then(response => response.json()).then(list => setList(list))
+        fetch(url).then(response => response.json()).then(list => setList(list))
         .catch(error => console.error("Error fetching data: ", error));
     }, []);
 

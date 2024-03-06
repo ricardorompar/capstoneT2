@@ -7,10 +7,13 @@ function ListComponent({itemKey, itemValue}) {
     const [showPValues, setShowPValues] = useState(null);
     const [data, setData] = useState(null);
 
+    //const url = "https://mcsbt-integration-rickyr.nw.r.appspot.com/api/portfolio/";
+    const url = "http://127.0.0.1:5000";
+    
     const handleClick = () => {
         // Make the request to the server
         setShowPValues(true);
-        fetch(`https://mcsbt-integration-rickyr.nw.r.appspot.com/api/portfolio/${itemKey}`)
+        fetch(url+itemKey)
         .then(response => response.json())
         .then(data => {
             setData(data); // Log the data or do something with it
