@@ -6,13 +6,12 @@ function PastValues({data, timeInt}) {  //this component receives a key as a par
     var seriesName = "values_"+timeInt; //this name is defined in the flask backend
     return (
         <Container>
-            
             {!data ?(
                 <Spinner className='my-2 mx-auto' animation="border" />
             ):(
-                // new version:
-                <>                    
-                    <Table responsive hover>
+                // new version:   
+                <>               
+                    <Table hover responsive>
                         <thead>
                             <tr>
                                 <th>Time/date</th>
@@ -25,8 +24,6 @@ function PastValues({data, timeInt}) {  //this component receives a key as a par
                         </thead>
                         
                         <tbody>
-                            {/* map here: */}
-                            {/* {console.log(`s name: ${seriesName}`)} */}
                             {Object.entries(data[seriesName]).map(([date, values]) =>( //this will map the contents of the json into a ListGroup.item
                                 <tr key={date}>
                                     
@@ -47,7 +44,7 @@ function PastValues({data, timeInt}) {  //this component receives a key as a par
                             ))}
                         </tbody>
                     </Table>
-                </>
+                </> 
             ) }
         </Container>
     );

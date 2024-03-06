@@ -38,3 +38,27 @@ The navbar and footer are just decorations for the moment. They don’t really p
 For Milestone0, user authentication is not yet implemented. The different users must be selected by hard coding it in the server app.
 
 There are 3 different portfolios corresponding to user{n} in the [user_database.json](https://github.com/ricardorompar/capstoneT2/blob/main/milestones/user_database.json) file.
+
+Update from March 6, 2024 : authentication will be implemented in upcoming milestones.
+
+---
+
+## Milestone1
+
+The main differences from the previous version are:
+
+- The app is now available online. Can be accessed through [this link](https://frontend_bucket_rickyr.storage.googleapis.com/index.html).
+- The main page displays the total portfolio value
+- The app offers a basic navigation experience. Compared to the previous version, the stock list is now included in a navbar that pops from the left and the relevant past values are displayed as a table in the center of the page.
+
+Here are some screenshots of the app:
+
+List of stocks:
+
+![Untitled](Untitled%202.png)
+
+Past values:
+
+![Untitled](Untitled%203.png)
+
+Stay tuned for DB integration next week!

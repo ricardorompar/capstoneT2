@@ -4,7 +4,7 @@ import os
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from dotenv import load_dotenv #For retrieving the api key
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime
 
 # Load the environment variables from the .env file
 load_dotenv()
@@ -50,6 +50,23 @@ def filter_amount(time_series:dict, size:int) -> dict:
     except:
         print("Error getting time series from AV API response.")
         return float("nan")
+
+def filter_by_date(time_series:dict, start_date:str, end_date:str) -> dict:
+    '''
+    This takes the API response and cuts it from the start to the end dates
+    '''
+    start_date = datetime.strptime(start_date, "%Y-%m-%d").date()
+    end_date = datetime.strptime(end_date, "%Y-%m-%d").date()
+    filtered_dict = {}
+    try:
+        for date_str, values in time_series.items():
+            dates = datetime.strptime(date_str, "%Y-%m-%d").date()
+            if start_date <= dates <= end_date:
+                filtered_dict[date_str] = values
+    except:
+        print("Error in filtering data by dates. Maybe not using correct time interval?")
+    
+    return filtered_dict
 
 
 def get_past_vals(stock:str, interval:str="daily") -> dict:
@@ -121,10 +138,11 @@ def create_portfolio() -> json:
     portfolio["total_port_val"] = round(total_port_val, 2)
     return jsonify(portfolio)
 
-@app.route("/api/portfolio/<stock>")
+@app.route("/api/portfolio/<stock>", methods=['GET'])
 def get_stock_value(stock: str) -> json:
-    interval = request.args.get("interval") #this takes the query params. It turns out it is very simple
-    # amount = request.args.get("amount")
+    interval = request.args.get("interval", "daily") #this takes the query params. It turns out it is very simple. BY DEFAULT IS DAILY
+    start_date = request.args.get("start_date", "2024-02-06")   #by default last month
+    end_date = request.args.get("end_date", "2024-03-06")   #by default today
     #inspo from https://stackoverflow.com/questions/11774265/how-do-you-access-the-query-string-in-flask-routes
     
     series = get_past_vals(stock, interval)  #by default it takes the daily values
@@ -132,8 +150,8 @@ def get_stock_value(stock: str) -> json:
     past_stock["symbol"]=stock
     try:
         #lets use the last 20 values
-        past_stock[f"values_{interval}"]=filter_amount(series, 20)
-        # past_stock[f"values_{interval}"]=filter_amount(series, int(amount))
+        # past_stock[f"values_{interval}"]=filter_amount(series, 20)
+        past_stock[f"values_{interval}"]=filter_by_date(series, start_date, end_date)   #now filtering by dates
         return jsonify(past_stock)
     
     except:

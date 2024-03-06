@@ -19,12 +19,12 @@ function StocksList() {
 
     //for retrieving portfolio:
     const userId = "user1";
-    const url = `https://mcsbt-integration-rickyr.nw.r.appspot.com/api/portfolio?userId=${userId}`;
-    //const url = `http://127.0.0.1:5000/api/portfolio?userId=${userId}`;
+    //const url = `https://mcsbt-integration-rickyr.nw.r.appspot.com/api/portfolio?userId=${userId}`;
+    const url = `http://127.0.0.1:5000/api/portfolio?userId=${userId}`;
 
     //for stock info:
-    const url2 = "https://mcsbt-integration-rickyr.nw.r.appspot.com/api/portfolio/";
-    //const url2 = "http://127.0.0.1:5000/api/portfolio/";
+    //const url2 = "https://mcsbt-integration-rickyr.nw.r.appspot.com/api/portfolio/";
+    const url2 = "http://127.0.0.1:5000/api/portfolio/";
     var interval = "daily"  //for the new version
 
     useEffect(()=>{
@@ -34,38 +34,42 @@ function StocksList() {
         .catch(error => console.error("Error fetching data: ", error));
         }, [url]);
 
-    useEffect(()=>{
-        if (interval&&selectedStock) { // Ensure itemKey is not undefined or null
-            const fetchData = async () => {
-                try {
-                    const response = await fetch(url2 + selectedStock + "?interval=" + interval, { method: "GET", mode: "cors" });
-                    const pastData = await response.json();
-                    setPastData(pastData);
-                    
-                } catch (error) {
-                    console.error("Error fetching data: ", error);
-                }
-            };
-            fetchData();
-            setShowPValues(true);
-        }
-    },[selectedStock, selectedInterval]);
+    // useEffect(()=>{
+        
+    //     const fetchData = async (itemKey) => {
+    //         try {
+    //             const response = await fetch(url2 + itemKey, { method: "GET", mode: "cors" });
+    //             const pastData = await response.json();
+    //             setShowPValues(true);
+    //             setPastData(pastData);
+                
+    //         } catch (error) {
+    //             console.error("Error fetching data: ", error);
+    //         }
+    //     };
+    //     fetchData();
+    // },[]);
 
     const handleSelection = (itemKey) => {
         setShowPValues(false);
+        fetch(url2+itemKey, {method:"GET", mode:"cors"})    //i am not yet defining the query params. all defaults
+            .then(response => response.json())
+            .then(data => setPastData(data))
+            .catch(error => console.error("Error fetching data: ", error));
+        setShowPValues(true);
         handleClose();
         setSelectedStock(itemKey);
         
     };
+    //pd this was very complicated and frustrating!!
     const handleTimeSelection = (event) => {
-        setShowPValues(false);
         var buttonValue = event.target.value;
         setSelectedInterval(buttonValue);
-        //pd this was very complicated and frustrating!!
+        
     };
 
     return (
-        <Container className='center-content min-vh-100 mt-3 w-75 m-auto' style={{ minWidth: '400px' }}>
+        <Container className='center-content min-vh-100 mt-3 w-75 m-auto' style={{ minWidth: '300px' }}>
             <Card className='p-3 my-2 m-auto'>
                 <Row>
                     <Col>
@@ -109,7 +113,7 @@ function StocksList() {
                         Choose Stock
                     </Button>
                 </Row>
-
+                
                 <Row className='m-auto mt-3'>
                     {showPValues &&     //this toggles visualization
                         <>
@@ -127,7 +131,6 @@ function StocksList() {
                                     <Button variant="secondary" value="min1">1 minute</Button>
                                 </ButtonGroup>
                             </Row>}
-
                             <p className='fs-3 fw-3'>{selectedStock}</p>
                             <PastValues data={pastData} timeInt={interval} className='m-auto mt-3'/>
                         </>
