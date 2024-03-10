@@ -1,12 +1,12 @@
 import json
 import requests
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, session
 from flask_cors import CORS
-
 import cp_functions as cp #custom module
-
+#flask setup:
 app = Flask(__name__)
-CORS(app)
+CORS(app, supports_credentials=True)    #needed for handling data from forms
+app.config["SECRET_KEY"] = cp.get_flask_secret()
 
 @app.route("/api/portfolio")
 def create_portfolio() -> json:
@@ -53,11 +53,22 @@ def get_stock_value(stock: str) -> json:
         # past_stock[f"values_{interval}"]=filter_amount(series, 20)
         past_stock[f"values_{interval}"]= cp.filter_by_date(series, start_date, end_date)   #now filtering by dates
         return jsonify(past_stock)
-    
     except:
         print("Error in data")
         return {}
     
+@app.route('/login', methods=['POST'])
+def login():
+    data = request.json
+    username = data['username']
+    password = data['password']
+    # Authenticate the user here
+    print(username, password)
+    if cp.check_user(username, password):
+        session['username'] = username
+        return {'message': 'Logged in successfully'}, 200
+    else:
+        return {'message': 'Authentication failed'}, 401
 
 if __name__ == "__main__":
     #app.run() #for production

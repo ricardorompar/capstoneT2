@@ -10,12 +10,17 @@ import os
 import json
 from dotenv import load_dotenv #For retrieving the api key
 from datetime import date, timedelta, datetime
+# from sqlalchemy import text
 
 # Load the environment variables from the .env file
 def get_API_key():
     load_dotenv()
     return os.getenv("ALPHA_VANTAGE_KEY")
 API_KEY = get_API_key()
+
+def get_flask_secret():
+    load_dotenv()
+    return os.getenv("FLASK_SECRET")
 
 #INTERACTING WITH THE DATABASE:
 def hasher(string:str):
@@ -162,4 +167,5 @@ def get_past_vals(stock:str, interval:str="daily") -> dict:
 #for debugging:
 if __name__ == "__main__":
     print(user_stocks("testUser"))
+    print(get_flask_secret())
 #rr
