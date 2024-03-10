@@ -3,27 +3,28 @@ import requests
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 
-import cp_functions #custom module
+import cp_functions as cp #custom module
 
 app = Flask(__name__)
 CORS(app)
 
 @app.route("/api/portfolio")
 def create_portfolio() -> json:
-    userId = request.args.get("userId", "user1")
+    userId = request.args.get("userId", "testUser")
         
     # userId = "user1" #change for different users
     portfolio = {}    #This dictionary has the response from this endpoint as specified in the doesign
     portfolio["username"] = userId  #first item username
     total_port_val = 0
-    user_portfolio = cp_functions.get_user_list(user_id=userId)
+    # user_portfolio = cp.get_user_list(user_id=userId)
+    user_portfolio = cp.user_stocks(username=userId)
     portfolio["portfolio"] = {} #another empty dict
     for stock, num_stocks in user_portfolio.items():
         #make the requests to the API and return the last closing value:
-        data = cp_functions.get_past_vals(stock, "min60")
+        data = cp.get_past_vals(stock, "min60")
         #I only want the last closing value, so:
         try:
-            last_close = cp_functions.get_last_close(data) #by default last value
+            last_close = cp.get_last_close(data) #by default last value
         except:
             print("Error in data")
             last_close = float("nan") #error
@@ -44,13 +45,13 @@ def get_stock_value(stock: str) -> json:
     end_date = request.args.get("end_date", "2024-03-06")   #by default today
     #inspo from https://stackoverflow.com/questions/11774265/how-do-you-access-the-query-string-in-flask-routes
     
-    series = cp_functions.get_past_vals(stock, interval)  #by default it takes the daily values
+    series = cp.get_past_vals(stock, interval)  #by default it takes the daily values
     past_stock={}
     past_stock["symbol"]=stock
     try:
         #lets use the last 20 values
         # past_stock[f"values_{interval}"]=filter_amount(series, 20)
-        past_stock[f"values_{interval}"]= cp_functions.filter_by_date(series, start_date, end_date)   #now filtering by dates
+        past_stock[f"values_{interval}"]= cp.filter_by_date(series, start_date, end_date)   #now filtering by dates
         return jsonify(past_stock)
     
     except:

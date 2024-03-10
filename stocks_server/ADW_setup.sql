@@ -85,3 +85,43 @@ BEGIN
     commit;
 END;
 /
+
+--we need the rest api endpoint:
+--this is for fetching user and password:
+--REMEMBER THIS WILL GIVE AN EMPTY 'items' LIST IF THE USERNAME IS NOT FOUND
+BEGIN
+  ORDS.define_service(
+    p_module_name    => 'user check',
+    p_base_path      => 'users/',
+    p_pattern        => ':username/:password/',
+    p_method         => 'GET',
+    p_source_type    => ORDS.source_type_collection_feed,
+    p_source         => 'SELECT username, password 
+                         FROM CAPSTONE.USERS u
+                         WHERE u.USERNAME = :username AND u.PASSWORD = :password', 
+    p_items_per_page => 10
+  );
+  COMMIT;
+END;
+/
+-- example: https://gb9d3cf06fca1a2-capstoneadw.adb.eu-madrid-1.oraclecloudapps.com/ords/capstone/users/testUser/testPass/
+
+--in this endpoint i need to fetch the portfolio composition for a given user:
+--REMEMBER THIS WILL GIVE AN EMPTY 'items' LIST IF THE USERNAME IS NOT FOUND
+BEGIN
+  ORDS.define_service(
+    p_module_name    => 'user_stocks',
+    p_base_path      => 'user_stocks/',
+    p_pattern        => ':username/',
+    p_method         => 'GET',
+    p_source_type    => ORDS.source_type_collection_feed,
+    p_source         => 'SELECT s.STOCK, s.QUANT 
+                         FROM CAPSTONE.USERS u JOIN CAPSTONE.STOCKS s ON u.USER_ID = s.USER_ID 
+                         WHERE u.USERNAME = :username',     --this query will get the stock composition in the format "AAPL,11","MSFT,22", and so on
+    p_items_per_page => 10
+  );
+  COMMIT;
+END;
+/
+
+--example: https://gb9d3cf06fca1a2-capstoneadw.adb.eu-madrid-1.oraclecloudapps.com/ords/capstone/user_stocks/testUser/

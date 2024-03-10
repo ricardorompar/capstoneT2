@@ -11,17 +11,54 @@ import json
 from dotenv import load_dotenv #For retrieving the api key
 from datetime import date, timedelta, datetime
 
+# Load the environment variables from the .env file
+def get_API_key():
+    load_dotenv()
+    return os.getenv("ALPHA_VANTAGE_KEY")
+API_KEY = get_API_key()
+
+#INTERACTING WITH THE DATABASE:
 def hasher(string:str):
     hash = hashlib.sha1()
     hash.update(string.encode())
     return hash.hexdigest()
 
-# Load the environment variables from the .env file
-def get_API_key():
-    load_dotenv()
-    return os.getenv("ALPHA_VANTAGE_KEY")
+#testUser2 has password '9a23b6d49aa244b7b0db52949c0932c365ec8191' the hashed version of testPass
 
-API_KEY = get_API_key()
+def check_user(username:str, password:str) -> bool:
+    #this function returns true if the user is found in the database, false otherwise. REMEMBER THE PASSWORD MUST BE HASHED
+    password=hasher(password)
+    try:
+        url = f"https://gb9d3cf06fca1a2-capstoneadw.adb.eu-madrid-1.oraclecloudapps.com/ords/capstone/users/{username}/{password}/"
+        r = requests.get(url)
+        data = r.json()
+        data = data["items"]    #the format that oracle uses is a list of dicts called "items"
+        if data:    #if its NOT an empty list means the user was found in the DB
+            return True
+        else:
+            return False
+    except:
+        print("Error connecting to Oracle database")
+        return False
+
+def user_stocks(username:str) -> dict:
+    #this function gets the stocks belonging to a user
+    try:
+        url = f"https://gb9d3cf06fca1a2-capstoneadw.adb.eu-madrid-1.oraclecloudapps.com/ords/capstone/user_stocks/{username}/"
+        r = requests.get(url)
+        data = r.json()
+        data = data["items"]    #the format that oracle uses is a list of dicts called "items"
+        composition = {}
+        for stock in data:   #i also know that this list has dicts in the format {'stock': 'AAPL', 'quant': 11}
+            composition[stock["stock"]]=stock["quant"]
+        return composition
+    except:
+        print("Error connecting to Oracle database")
+        return {}
+
+def total_port_value(portfolio:dict)->float:
+    #this function computes the total portfolio value
+    pass
 
 ##TO BE MODIFIED AFTER DB INTEGRATION =========================>
 #read the user database and store in a dictionary:
@@ -111,6 +148,7 @@ def get_past_vals(stock:str, interval:str="daily") -> dict:
         series_name =  "Time Series (1min)"
     #now i can build my api call with the full url:
     try:
+        
         url = f"https://www.alphavantage.co/query?{query_params}"
         r = requests.get(url)
         data = r.json()
@@ -120,4 +158,8 @@ def get_past_vals(stock:str, interval:str="daily") -> dict:
         print("Error fetching data from AlphaVantage API")
         return {}
 
+
+#for debugging:
+if __name__ == "__main__":
+    print(user_stocks("testUser"))
 #rr
