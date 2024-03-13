@@ -6,10 +6,10 @@ import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import Spinner from 'react-bootstrap/Spinner';
+import FloatingLabel from 'react-bootstrap/FloatingLabel';
 
 function LoginForm({getUsername}) {
-    //for validating form:
-    const [validated, setValidated] = useState(false);
+    const [validated, setValidated] = useState(false); //for validating form:
     const [loading, setLoading] = useState(false);
     const [requestStatus, setRequestStatus] = useState('')
     //for logging user in:
@@ -20,6 +20,7 @@ function LoginForm({getUsername}) {
         event.preventDefault();
         const form = event.currentTarget;
         if (form.checkValidity() === false) {   //this is for checking if the inputs are correct
+            setRequestStatus('');
             event.preventDefault();
             event.stopPropagation();
         }
@@ -38,14 +39,14 @@ function LoginForm({getUsername}) {
                     },
                     body: JSON.stringify({ username, password }),
                 });
-                console.log(response) //debugging
                 if (response.ok) {
                     getUsername(username)  //use the function sent by App (parent component)
+                    console.log(`Get username ok: ${username}`)
                 } else {
                     setLoading(false);
-                    setRequestStatus("User not found")
+                    setRequestStatus("Wrong username or password");
+                    setValidated(false)
                 }
-                    // Send the username and password to your Flask server
 
             } catch(error){
                 setLoading(false)
@@ -65,27 +66,30 @@ function LoginForm({getUsername}) {
                 <h1 className="h3 mb-3 fw-normal fs-5">Please sign in</h1>
                 <Form noValidate validated={validated} onSubmit={handleSubmit}>
                     <Form.Group as={Col} controlId="validationCustom01">
-                        <Form.Label>Username</Form.Label>
-                        <Form.Control
-                            required
-                            type="username"
-                            placeholder="Your username"
-                            value={username}
-                            onChange={(e) => setUsername(e.target.value)}
-                        />
+                        <FloatingLabel controlId="floatingInput" label="Username">
+                            <Form.Control
+                                required
+                                type="username"
+                                placeholder="Your username"
+                                value={username}
+                                onChange={(e) => setUsername(e.target.value)}
+                            />
+                        </FloatingLabel>
+                        
                         <Form.Control.Feedback type="invalid">
                             Enter a valid username
                         </Form.Control.Feedback>
                     </Form.Group>
                     <Form.Group as={Col} controlId="validationCustom02" className='mt-3'>
-                        <Form.Label>Pasword</Form.Label>
-                        <Form.Control
-                            required
-                            type="password"
-                            placeholder="Password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                        />
+                        <FloatingLabel controlId="floatingPassword" label="Password">
+                            <Form.Control
+                                required
+                                type="password"
+                                placeholder="Password"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                            />
+                        </FloatingLabel>
                         <Form.Control.Feedback type="invalid">
                             Enter your password
                         </Form.Control.Feedback>
