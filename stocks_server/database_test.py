@@ -21,18 +21,18 @@ def check_user(username, password):
         FROM CAPSTONE.USERS u
         WHERE u.USERNAME = :username AND u.PASSWORD = :password;
     ''')
-    # try:
-    with engine.connect() as connection:
-        print(sql_sentence)
-        user = connection.execute(sql_sentence, {"username":username, "password":password}).mappings().fetchone()
-        if user:
-            {"username": user["username"],
-            "password": user["id"]}
-        else:
-            return {}
-        # except:
-        #     print("Error connecting to Oracle DB")
-        #     return{"error":"connection to DB failed"}
+    try:
+        with engine.connect() as connection:
+            print(sql_sentence)
+            user = connection.execute(sql_sentence, {"username":username, "password":password}).mappings().fetchone()
+            if user:
+                {"username": user["username"],
+                "password": user["id"]}
+            else:
+                return {}
+    except:
+        print("Error connecting to Oracle DB")
+        return{"error":"connection to DB failed"}
 
 if __name__ == "__main__":
     print(os.getenv("DB_NAME"), os.getenv("DB_PASSWORD"))
