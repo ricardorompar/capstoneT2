@@ -17,7 +17,7 @@ Here are some screenshots of the system:
 
 ![Untitled](README_src/Untitled.png)
 
-![Untitled](README_src/Untitled%201.png)
+![Untitled](README_src/Untitled%203.png)
 
 ![Untitled](README_src/Untitled%202.png)
 
