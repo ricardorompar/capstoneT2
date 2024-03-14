@@ -1,15 +1,23 @@
-import React, { useState } from 'react';
-import { Button, Modal, Form, Col, Row } from 'react-bootstrap';
+import React, { useState, useEffect } from 'react';
+import { Button, Modal, Form, Alert, Row, Badge } from 'react-bootstrap';
 
-function AddStocks({user, logUserOut, innerText}) {
+function AddStocks({user, innerText, currentValues, changeModif, handleReload}) {
     //Stuff for modal:
     const [show, setShow] = useState(false);
-    const handleClose = () => setShow(false);
-    const handleShow = () => setShow(true);
+    const handleClose = () => {
+        setShow(false);
+        setMessage(null);
+    }
+    function handleShow(){
+        setShow(true);
+        setStock(null);
+        setQuant(0);
+        setDisable(true);
+    }
 
     //For modifying stocks:
     const [stock, setStock] = useState(null);
-    const [quant, setQuant] = useState(null)
+    const [quant, setQuant] = useState(0)
     //List of possible stocks to add:
     const stockSymbols = [
         "MSFT", "AAPL", "NVDA", "AMZN", "GOOGL", "GOOG", "META", "AVGO", "TSLA", "ASML",
@@ -23,71 +31,122 @@ function AddStocks({user, logUserOut, innerText}) {
         "EA", "CSGP"
     ];
     const [disable, setDisable] = useState(true);
-    const [message, setMessage] = useState(null)
-    // const [validated, setValidated] = useState(false); //for validating form:
-    // const [loading, setLoading] = useState(false);
-    // const [requestStatus, setRequestStatus] = useState('')
+    const [action, setAction] = useState('Add/Modify Stocks')
+    const [message, setMessage] = useState(null);
+    const [modification, setModification] = useState(null);
 
     function handleSubmit(){
+        changeModif(JSON.stringify(modification));
         handleClose();
+        handleReload();
     };
 
-    function checkEnable(){
-        if (stock && quant && stock!="Stock" && quant!=0){ //if no stock or quant
-                setDisable(false);
+    useEffect(() => {
+        if(stock){
+            if(stock!=="Select stock"){
+                setDisable(false)
+                if (stock in currentValues){
+                    setAction(`Modify ${stock}`);
+                    //if action is modify, then:
+                    var delta = currentValues[stock].num_stocks - quant;
+                    if (delta<0){
+                        setMessage(`This will add ${Math.abs(delta)} stocks for ${stock}`)
+                        setModification({"action":"modify", "user":user, "symbol":stock, "quantity":quant})
+                    }else if (delta>0){
+                        setMessage(`This will subtract ${Math.abs(delta)} stocks from ${stock}`)
+                        setModification({"action":"modify", "user":user, "symbol":stock, "quantity":quant})
+                    }else if (delta==0){
+                        setDisable(true)
+                        setMessage(`This will not change your portfolio`)
+                    }
+                    if (!quant){
+                        setMessage(`This will remove ${stock} from your portfolio`)
+                        setAction(`Remove ${stock}`)
+                        setModification({"action":"remove", "user":user, "symbol":stock, "quantity":quant})
+                    }
+                }else{
+                    if (quant){
+                        setAction(`Add ${stock}`)
+                        setMessage(`This will add ${Math.abs(quant)} stocks for ${stock}`)
+                        setModification({"action":"add", "user":user, "symbol":stock, "quantity":quant})
+                    }else{
+                        setMessage(`Increase number of stocks`)
+                        setDisable(true)
+                    }
+                }
+            }else{
+                setDisable(true)
+                setAction("Select stock")
+            }
         }else{
-            setDisable(true);
+            setAction('Add/Modify Stocks')
         }
-    }
+    }, [stock, quant]); 
 
     const handleStockChange = (event) => {
         setStock(event.target.value);
-        checkEnable();
     };
+
     const handleQuantChange = (event) => {
-        setQuant(event.target.value);
-        checkEnable();
+        setQuant(parseInt(event.target.value, 10));
     };
 
     return(
-        <>
-            <Button variant="outline-success" className='w-50 m-auto' onClick={handleShow}>
+        <div className='p-2 d-flex justify-content-center'>
+            <Button variant="outline-success" className='w-50' onClick={handleShow}>
                 {innerText}
             </Button>
             <Modal show={show} onHide={handleClose}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Add/Modify stocks</Modal.Title>
+                    <Modal.Title>{innerText}</Modal.Title>
                 </Modal.Header>
                 <Modal.Body className='m-auto w-75'>
                     <Form>
                         <Row>
                             <Form.Label> Select stock symbol</Form.Label>
-                            <Form.Select aria-label="Default select example" aria-placeholder='STOCK' size='lg' onChange={handleStockChange}>
-                                <option>Stock</option>
+                            <Form.Select className="form-select" aria-label="Default select example" aria-placeholder='STOCK' onChange={handleStockChange}>
+                                <option>Select stock</option>
                                 {stockSymbols.map((ticker) =>( 
                                     <option key={ticker}>{ticker}</option>
                                 ))}
                             </Form.Select>
                         </Row>
                         <Row className='mt-2'>
-                            <Form.Label> Select stock quantity</Form.Label>
-                            <Form.Control type="number" size='lg' min='0' step='1' onChange={handleQuantChange}></Form.Control>
+                            <Form.Label> Select new stock quantity</Form.Label>
+                            <Form.Control type="number" min='0' step='1' onChange={handleQuantChange}></Form.Control>  
                         </Row>
                         <Row className='text-secondary mt-3' style={{fontSize:'12px'}}>If you already have stocks with this symbol, this will overwrite the existing value.</Row>
-                        <p>{user} {stock} {quant} </p>
+                        {/* <p> {disable&&"disabled"} | {user} {stock} {quant} {JSON.stringify(currentValues)} </p> */}
+                        <Row>
+                            <Alert variant='secondary' className='mt-3'>
+                                {
+                                    !disable?(
+                                        <>
+                                            {(stock in currentValues)?(
+                                                <p><b>{stock}</b>: you currently have <Badge>{currentValues[stock].num_stocks}</Badge></p>
+                                            ):(
+                                                <p><b>{stock}</b>: you don't have any stocks</p>
+                                            )}
+                                        </>
+                                    ):(
+                                        <p>Select stock</p>
+                                    )
+                                }
+                                {message}
+                            </Alert>
+                        </Row>
                     </Form>
                 </Modal.Body>
-                {message}
                 <Modal.Footer>
                     <Button variant="secondary" onClick={handleClose}>
                         Cancel
                     </Button>
                     <Button variant="primary" onClick={handleSubmit} disabled={disable}>
-                        Add new stocks
+                        {action}
                     </Button>
                 </Modal.Footer>
             </Modal>
-        </>
+        </div>
     );
 }
 export default AddStocks;

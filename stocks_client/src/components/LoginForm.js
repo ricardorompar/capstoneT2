@@ -8,7 +8,7 @@ import Form from 'react-bootstrap/Form';
 import Spinner from 'react-bootstrap/Spinner';
 import FloatingLabel from 'react-bootstrap/FloatingLabel';
 
-function LoginForm({getUsername}) {
+function LoginForm({getUsername, url}) {
     const [validated, setValidated] = useState(false); //for validating form:
     const [loading, setLoading] = useState(false);
     const [requestStatus, setRequestStatus] = useState('')
@@ -26,7 +26,7 @@ function LoginForm({getUsername}) {
         }
 
         setValidated(true);
-        const loginUrl = "http://127.0.0.1:5000/login"  //for development
+        const loginUrl = `${url}/login`  //for development
         if (form.checkValidity() === true){
             setLoading(true);
             setRequestStatus('');
