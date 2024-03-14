@@ -1,4 +1,4 @@
-#!/home/ricardorompar/IE-master/TERM2/capstoneProject/milestones/stocks_server/.cp_venv/bin/python3
+#!/home/ricardorompar/IE-master/TERM2/capstoneProject/stocks_server/.cp_venv/bin/python3
 # -*- coding: utf-8 -*-
 import re
 import sys

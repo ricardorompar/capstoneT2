@@ -38,7 +38,7 @@ deactivate () {
 # unset irrelevant variables
 deactivate nondestructive
 
-VIRTUAL_ENV="/home/ricardorompar/IE-master/TERM2/capstoneProject/milestones/stocks_server/.cp_venv"
+VIRTUAL_ENV="/home/ricardorompar/IE-master/TERM2/capstoneProject/stocks_server/.cp_venv"
 export VIRTUAL_ENV
 
 _OLD_VIRTUAL_PATH="$PATH"

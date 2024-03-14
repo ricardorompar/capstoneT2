@@ -1,6 +1,6 @@
 # server app:
 .env
-.cp_env
+.cp_venv
 node_modules
 __pycache__
 
