@@ -15,11 +15,11 @@ The system now has connection to an Oracle database.
 
 Here are some screenshots of the system:
 
-![Untitled](README_src/Untitled.png)
+![Untitled](README_src/cap1.png)
 
-![Untitled](README_src/Untitled%203.png)
+![Untitled](README_src/cap2.png)
 
-![Untitled](README_src/Untitled%202.png)
+![Untitled](README_src/cap3.png)
 
 ---
 
@@ -30,16 +30,6 @@ The main differences from the previous version are:
 - The app is now available online. Can be accessed through [this link](https://frontend_bucket_rickyr.storage.googleapis.com/index.html).
 - The main page displays the total portfolio value
 - The app offers a basic navigation experience. Compared to the previous version, the stock list is now included in a navbar that pops from the left and the relevant past values are displayed as a table in the center of the page.
-
-Here are some screenshots of the app:
-
-List of stocks:
-
-![Untitled](README_src/Untitled%203.png)
-
-Past values:
-
-![Untitled](README_src/Untitled%204.png)
 
 Stay tuned for DB integration next week!
 
@@ -62,15 +52,6 @@ The system has two parts:
 
 In each case, the server performs another HTTP request to the AlphaVantage API. It processes that information and returns only the closing value or the values from the last 30 days accordingly.
 
-Here are some screenshots:
-
-Nodejs server running locally in port 3000:
-
-Here are some screenshots:
-
-![Untitled](README_src/Untitled%205.png)
-
-![Untitled](README_src/Untitled%206.png)
 
 The component in the center is the StocksList which does all the requests to the Flask server
 
