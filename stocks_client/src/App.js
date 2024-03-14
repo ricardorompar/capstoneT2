@@ -4,10 +4,10 @@ import StocksNavbar from './components/StocksNavbar';
 import StocksFooter from './components/StocksFooter';
 import Portfolio from './components/Portfolio';
 import LoginForm from './components/LoginForm';
-import { Spinner } from 'react-bootstrap';
 import React, { useState, useEffect } from 'react';
 
-const url = "http://127.0.0.1:5000";
+// const url = "http://127.0.0.1:5000"; //development
+const url="https://mcsbt-integration-rickyr.nw.r.appspot.com"
 
 function App() {
     const [loggedUser, setLoggedUser] = useState('');
