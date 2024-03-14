@@ -78,7 +78,6 @@ function Portfolio({user, list, changeModif, loading, handleReload, url}) {
                                     <AddStocks user={user} innerText={'Add/Modify stocks'} currentValues={list.portfolio} changeModif={changeModif} handleReload={handleReload}></AddStocks>
                                 </Row>
                                 <Row>
-                                    {selectedStock}
                                     <PastValues stock={selectedStock} url={url}></PastValues>
                                 </Row>
                             </Card>

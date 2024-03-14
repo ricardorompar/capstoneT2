@@ -10,16 +10,15 @@ import os
 import json
 from dotenv import load_dotenv #For retrieving the api key
 from datetime import date, timedelta, datetime
-# from sqlalchemy import text
+import hashlib
 
 # Load the environment variables from the .env file
+load_dotenv()
 def get_API_key():
-    load_dotenv()
     return os.getenv("ALPHA_VANTAGE_KEY")
 API_KEY = get_API_key()
 
 def get_flask_secret():
-    load_dotenv()
     return os.getenv("FLASK_SECRET")
 
 #INTERACTING WITH THE DATABASE:
@@ -29,6 +28,11 @@ def hasher(string:str):
     return hash.hexdigest()
 
 #testUser2 has password '9a23b6d49aa244b7b0db52949c0932c365ec8191' the hashed version of testPass
+
+def hasher(string:str):
+    hash = hashlib.sha1()
+    hash.update(string.encode())
+    return hash.hexdigest()
 
 def check_user(username:str, password:str) -> bool:
     #this function returns true if the user is found in the database, false otherwise. REMEMBER THE PASSWORD MUST BE HASHED
@@ -64,19 +68,6 @@ def user_stocks(username:str) -> dict:
 def total_port_value(portfolio:dict)->float:
     #this function computes the total portfolio value
     pass
-
-##TO BE MODIFIED AFTER DB INTEGRATION =========================>
-#read the user database and store in a dictionary:
-with open("user_database.json", 'r') as file:
-        dict_db = json.load(file)
-
-def get_user_list(user_id):
-    #this function returns the list of symbols for a specific user
-    try:
-        return dict_db[user_id]
-    except KeyError:
-        print("User not found in database.")
-#<==============================================================
         
 def get_last_close(time_series:dict) -> float:
     '''
@@ -166,6 +157,6 @@ def get_past_vals(stock:str, interval:str="daily") -> dict:
 
 #for debugging:
 if __name__ == "__main__":
-    print(user_stocks("testUser"))
-    print(get_flask_secret())
+    print(hasher("12345"))
+    print(check_user("testUser", "1234"))
 #rr

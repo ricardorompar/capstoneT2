@@ -3,21 +3,29 @@ import requests
 from flask import Flask, request, jsonify, session
 from flask_cors import CORS
 import cp_functions as cp #custom module
+import models as md
+import os
+import oracledb
+from sqlalchemy.pool import NullPool
+from dotenv import load_dotenv #For retrieving the SECRETS
+
 #flask setup:
 app = Flask(__name__)
 CORS(app, supports_credentials=True)    #needed for handling data from forms
 app.config["SECRET_KEY"] = cp.get_flask_secret()
 
+#database setup:
+md.config_flask_db(app)
+
+#ENDPOINTS
 @app.route("/api/portfolio")
 def create_portfolio() -> json:
-    userId = request.args.get("userId", "testUser")
-        
-    # userId = "user1" #change for different users
+    user = request.args.get("user", "testUser")
+
     portfolio = {}    #This dictionary has the response from this endpoint as specified in the doesign
-    portfolio["username"] = userId  #first item username
+    portfolio["username"] = user  #first item username
     total_port_val = 0
-    # user_portfolio = cp.get_user_list(user_id=userId)
-    user_portfolio = cp.user_stocks(username=userId)
+    user_portfolio = md.get_portfolio(username=user)
     portfolio["portfolio"] = {} #another empty dict
     for stock, num_stocks in user_portfolio.items():
         #make the requests to the API and return the last closing value:
@@ -41,34 +49,49 @@ def create_portfolio() -> json:
 @app.route("/api/portfolio/<stock>", methods=['GET'])
 def get_stock_value(stock: str) -> json:
     interval = request.args.get("interval", "daily") #this takes the query params. It turns out it is very simple. BY DEFAULT IS DAILY
-    start_date = request.args.get("start_date", "2024-02-06")   #by default last month
-    end_date = request.args.get("end_date", "2024-03-06")   #by default today
-    #inspo from https://stackoverflow.com/questions/11774265/how-do-you-access-the-query-string-in-flask-routes
     
     series = cp.get_past_vals(stock, interval)  #by default it takes the daily values
     past_stock={}
     past_stock["symbol"]=stock
     try:
-        #lets use the last 20 values
-        # past_stock[f"values_{interval}"]=filter_amount(series, 20)
-        past_stock[f"values_{interval}"]= cp.filter_by_date(series, start_date, end_date)   #now filtering by dates
+        past_stock[f"values_{interval}"]=cp.filter_amount(series, 30)   #filter by amount of values
+        #past_stock[f"values_{interval}"]= cp.filter_by_date(series, start_date, end_date)   #filter by date
         return jsonify(past_stock)
     except:
         print("Error in data")
         return {}
-    
+
+@app.route("/api/update_user", methods=['POST'])
+def add_stock():
+    data = request.json
+    action = data["action"]
+    user = data['user']
+    symbol = data['symbol']
+    quantity = data['quantity']
+    if action == "modify":
+        md.STOCKS.modify(username=user, symbol=symbol,quantity=quantity)
+    elif action == "remove":
+        md.STOCKS.delete(username=user, symbol=symbol)
+    elif action == "add":
+        md.STOCKS.add(username=user, symbol=symbol, quantity=quantity)
+    print('Modifying with values:',action,user,symbol,quantity)
+    return {'message':'stocks updated successfully'}, 203
+
+@app.route("/logout", methods=['POST'])
+def logout():
+    session.clear()
+    return jsonify({'message':'user logged out successfully'}), 200
+
 @app.route('/login', methods=['POST'])
 def login():
     data = request.json
     username = data['username']
     password = data['password']
-    # Authenticate the user here
-    print(username, password)
-    if cp.check_user(username, password):
+    if md.USERS.check(username, cp.hasher(password)):
         session['username'] = username
-        return {'message': 'Logged in successfully'}, 200
+        return jsonify({'message': 'Logged in successfully'}), 200
     else:
-        return {'message': 'Authentication failed'}, 401
+        return jsonify({'message': 'Authentication failed'}), 401
 
 if __name__ == "__main__":
     #app.run() #for production

@@ -93,7 +93,7 @@ function AddStocks({user, innerText, currentValues, changeModif, handleReload}) 
 
     return(
         <div className='p-2 d-flex justify-content-center'>
-            <Button variant="outline-success" className='w-50' onClick={handleShow}>
+            <Button variant="outline-success" className='w-75' onClick={handleShow}>
                 {innerText}
             </Button>
             <Modal show={show} onHide={handleClose}>

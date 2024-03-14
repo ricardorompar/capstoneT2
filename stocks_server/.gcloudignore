@@ -17,3 +17,6 @@
 __pycache__/
 # Ignored by the build system
 /setup.cfg
+
+# ignoring the _other_ folder
+other

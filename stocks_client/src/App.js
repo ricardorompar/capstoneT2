@@ -44,7 +44,6 @@ function App() {
             });
             if (response.ok) {
                 const data = await response.json();
-                console.log(data) ; //debugging
                 setList(data);
                 setLoading(false);
             }else{
