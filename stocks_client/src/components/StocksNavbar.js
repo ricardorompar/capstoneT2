@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { NavDropdown, Container, Navbar, Nav, Button, Modal, Row } from 'react-bootstrap';
 
-function StocksNavbar({user, logUserOut}) {
+function StocksNavbar({user, logUserOut, setShowAboutModal}) {
     //Stuff for modal:
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
@@ -11,6 +11,8 @@ function StocksNavbar({user, logUserOut}) {
         handleClose();
         logUserOut();
     };
+    const aboutClicked = () => setShowAboutModal(true);
+
     return (
         <Navbar expand="lg">
             <Container expand="lg" className=' pb-3 my-2 border-bottom'>
@@ -18,9 +20,9 @@ function StocksNavbar({user, logUserOut}) {
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="me-auto">
-                        <Nav.Link href="#home">Home</Nav.Link>
-                        <Nav.Link href="#link">Features</Nav.Link>
-                        <NavDropdown title="About" id="basic-nav-dropdown">
+                        <Nav.Link href="/">Home</Nav.Link>
+                        <Nav.Link onClick={aboutClicked}>About</Nav.Link>
+                        <NavDropdown title="Info" id="basic-nav-dropdown">
                             <NavDropdown.Item href="https://www.alphavantage.co/documentation/">
                                 AlphaVantage
                             </NavDropdown.Item>

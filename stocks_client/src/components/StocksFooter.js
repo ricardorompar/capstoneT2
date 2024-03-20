@@ -1,34 +1,27 @@
 import { Container, Nav, Col} from 'react-bootstrap';
 
-function StocksFooter() {
-  return (
-    <Container>
-        <footer className="d-flex flex-wrap justify-content-between align-items-center py-5 my-5 border-top">
-            <Col className='d-flex align-items-center'>
-                <span className='mb-3 mb-md-0 text-body-secondary'>
-                    © {new Date().getFullYear()} ricardorompar
-                </span>
-                <a href="/" className="col-md-4 d-flex align-items-center justify-content-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none fs-2">
-                    💸
-                </a>
-            </Col>
-            <Nav className='justify-content-center'>
-                <Nav.Item>  {/*React-Bootstrap is pretty amazing*/}
-                    <a href="example.com" className="nav-link px-2 text-body-secondary">Home</a>
-                </Nav.Item>
-                <Nav.Item>
-                    <a href="#action" className="nav-link px-2 text-body-secondary">Features</a>
-                </Nav.Item>
-                <Nav.Item>
-                    <a href="#action2" className="nav-link px-2 text-body-secondary">FAQs</a>
-                </Nav.Item>
-                <Nav.Item>
-                    <a href="#action3" className="nav-link px-2 text-body-secondary">About</a>
-                </Nav.Item>
-            </Nav>
-        </footer>
-    </Container>
-  );
+function StocksFooter({setShowAboutModal}) {
+    const aboutClicked = () => setShowAboutModal(true);
+    return (
+        <Container className='w-100'>
+            <footer className="d-flex flex-wrap justify-content-between align-items-center py-5 my-5 border-top">
+                <Col className='d-flex align-items-center'>
+                    <a href="/" className="d-flex align-items-center justify-content-end link-body-emphasis text-decoration-none fs-2">
+                        💸
+                    </a>
+                    <span className='mb-3 mb-md-0 text-body-secondary'>
+                        © {new Date().getFullYear()} <a href='https://github.com/ricardorompar' className='text-decoration-none link-body-emphasis'>ricardorompar</a>
+                    </span>
+                </Col>
+                <Nav className='justify-content-center'>
+                    <Nav.Link onClick={aboutClicked} className='link-body-emphasis text-decoration-none'>
+                        {/* <a className="nav-link px-2 text-body-secondary" onClick={aboutClicked}>About</a> */}
+                        About
+                    </Nav.Link>
+                </Nav>
+            </footer>
+        </Container>
+    );
 }
 
 export default StocksFooter;

@@ -5,6 +5,7 @@ import StocksFooter from './components/StocksFooter';
 import Portfolio from './components/Portfolio';
 import LoginForm from './components/LoginForm';
 import React, { useState, useEffect } from 'react';
+import AboutModal from './components/AboutModal';
 
 const url = "http://127.0.0.1:5000"; //development
 // const url="https://mcsbt-integration-rickyr.nw.r.appspot.com"
@@ -23,6 +24,7 @@ function App() {
     const [modification, setModification] = useState(null);
     const [loading, setLoading] = useState(false);
     const [reloader, setReloader] = useState(false);
+    const [showAboutModal, setShowAboutModal] = useState(false);
 
     async function loadList() {
         //This function defines the first request that this component makes when it renders after login.
@@ -116,7 +118,6 @@ function App() {
     const changeModif = (values) => setModification(values);
 
     useEffect(()=>{
-        // if(loggedUser!==''||loggedUser!==null){ //execute this only if the user is logged in:
         if(showContent){
             loadList();
         }
@@ -165,9 +166,10 @@ function App() {
                 <LoginForm getUsername={loginSuccess} url={url}/>
             ):(
                 <Container className='min-vh-100'>
-                    <StocksNavbar user={loggedUser} logUserOut={logOut}></StocksNavbar>
+                    <StocksNavbar user={loggedUser} logUserOut={logOut} setShowAboutModal={setShowAboutModal}></StocksNavbar>
                     <Portfolio user={loggedUser} list={list} changeModif={changeModif} loading={loading} handleReload={handleReload} url={url}></Portfolio>
-                    <StocksFooter></StocksFooter>
+                    <AboutModal setShowAboutModal={setShowAboutModal} showAboutModal={showAboutModal}></AboutModal>
+                    <StocksFooter setShowAboutModal={setShowAboutModal}></StocksFooter>
                 </Container>
             )}
         </Container>
