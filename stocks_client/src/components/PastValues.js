@@ -1,4 +1,4 @@
-import { Col, Container, Spinner, Alert, Row, Table } from 'react-bootstrap';
+import { Col, Container, Spinner, Alert, Row, Table, Card } from 'react-bootstrap';
 import React, {useEffect, useState} from 'react';
 
 function PastValues({stock, url}) {  //this component receives a key as a parameter like AMZN
@@ -48,42 +48,44 @@ function PastValues({stock, url}) {  //this component receives a key as a parame
             ):(
                 stock?(
                     <Col>  
-                        <Row className='d-flex justify-content-center'>
-                            <Alert className='fs-6 fw-bold bg-secondary-subtle d-flex justify-content-center p-0 w-75' variant='flush'>{details.symbol}</Alert>
+                        <Row className='d-flex justify-content-center m-2'>
+                            <Alert className='fs-6 fw-bold bg-secondary-subtle d-flex justify-content-center p-1' variant='flush' style={{maxWidth:'500px'}}>{details.symbol}</Alert>
                         </Row>
-                        <Table hover responsive className='overflow-x-scroll'>
-                            <thead>
-                                <tr>
-                                    <th>Time/date</th>
-                                    <th>Open</th>
-                                    <th>High</th>
-                                    <th>Low</th>
-                                    <th>Close</th>
-                                    <th>Volume</th>
-                                </tr>
-                            </thead>
-                            
-                            <tbody>
-                                {Object.entries(details.values_daily).map(([date, values]) =>( //this will map the contents of the json into a ListGroup.item
-                                    <tr key={date}>
-                                        
-                                        <td>{date}</td>
-                                        {   //in this case the value is another object:
-                                            Object.entries(values).map(([key, price]) =>(
-                                            <td key={key}>
-                                                {(key==="5. volume")?(    //if the value is the volume i dont want the dollar sign
-                                                    <Col className='col-auto'>{price}</Col>
-                                                ):(
-                                                    <Col className='col-auto'>${price}</Col>
-                                                )}
-                                            </td>
-                                            ))
-                                        }
-                                    
+                        <Card className='m-2' style={{maxHeight:'50vh'}}>
+                            <Table hover responsive className='overflow-x-scroll'>
+                                <thead>
+                                    <tr>
+                                        <th>Time/date</th>
+                                        <th>Open</th>
+                                        <th>High</th>
+                                        <th>Low</th>
+                                        <th>Close</th>
+                                        <th>Volume</th>
                                     </tr>
-                                ))}
-                            </tbody>
-                        </Table>
+                                </thead>
+                                
+                                <tbody>
+                                    {Object.entries(details.values_daily).map(([date, values]) =>( //this will map the contents of the json into a ListGroup.item
+                                        <tr key={date}>
+                                            
+                                            <td>{date}</td>
+                                            {   //in this case the value is another object:
+                                                Object.entries(values).map(([key, price]) =>(
+                                                <td key={key}>
+                                                    {(key==="5. volume")?(    //if the value is the volume i dont want the dollar sign
+                                                        <Col className='col-auto'>{price}</Col>
+                                                    ):(
+                                                        <Col className='col-auto'>${price}</Col>
+                                                    )}
+                                                </td>
+                                                ))
+                                            }
+                                        
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </Table>
+                        </Card>
                     </Col>
                 ):(
                     <></>

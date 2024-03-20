@@ -100,7 +100,7 @@ function AddStocks({user, innerText, currentValues, changeModif, handleReload}) 
 
     return(
         <div className='p-2 d-flex justify-content-center'>
-            <Button variant="outline-success" className='w-75' onClick={handleShow}>
+            <Button variant="success" className='w-100' onClick={handleShow} style={{maxWidth:'500px'}}>
                 {innerText}
             </Button>
             <Modal show={show} onHide={handleClose}>
@@ -123,7 +123,6 @@ function AddStocks({user, innerText, currentValues, changeModif, handleReload}) 
                             <Form.Control type="number" min='0' step='1' onChange={handleQuantChange}></Form.Control>  
                         </Row>
                         <Row className='text-secondary mt-3' style={{fontSize:'12px'}}>If you already have stocks with this symbol, this will overwrite the existing value.</Row>
-                        {/* <p> {disable&&"disabled"} | {user} {stock} {quant} {JSON.stringify(currentValues)} </p> */}
                         <Row>
                             <Alert variant='secondary' className='mt-3'>
                                 {

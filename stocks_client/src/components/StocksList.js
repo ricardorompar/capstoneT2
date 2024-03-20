@@ -6,7 +6,7 @@ function StocksList({list, handleSelectStock}) {
         handleSelectStock(event.currentTarget.value);
     }
     return(
-        <Col className='d-flex flex-nowrap overflow-x-scroll'>
+        <Col className='d-flex flex-nowrap overflow-x-scroll my-3'>
             {Object.entries(list.portfolio).map(([label, details], id) => (
                 <Button key={id} className='m-1 bg-secondary-subtle border-0 text-dark p-0 hover_shadow' style={{minWidth:'150px'}} value={label} onClick={handleSelect}>
                     <Card.Header as="h5">{label}</Card.Header>

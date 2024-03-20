@@ -1,18 +1,16 @@
 import json
-import requests
 from flask import Flask, request, jsonify, session
 from flask_cors import CORS
 import cp_functions as cp #custom module
 import models as md
-import os
-import oracledb
-from sqlalchemy.pool import NullPool
-from dotenv import load_dotenv #For retrieving the SECRETS
 
 #flask setup:
 app = Flask(__name__)
-CORS(app, supports_credentials=True)    #needed for handling data from forms
+# CORS(app, supports_credentials=True)    #needed for handling data from forms
+CORS(app, supports_credentials=True, resources={r"/*" : {"origins" : "*"}})
 app.config["SECRET_KEY"] = cp.get_flask_secret()
+app.config['SESSION_COOKIE_SAMESITE'] = "None"
+app.config['SESSION_COOKIE_SECURE'] = True
 
 #database setup:
 md.config_flask_db(app)
@@ -93,17 +91,21 @@ def login():
     username = data['username']
     password = data['password']
     if md.USERS.check(username, cp.hasher(password)):
+        session.permanent = True #this makes it permanent
+        session.modified = True
         session['username'] = username
+        print(f"debugging: session {session['username']}--------------------------------------------------------------------------------------------")
         return jsonify({'username':session['username'], 'message': 'Logged in successfully'}), 200
     else:
         return jsonify({'message': 'Authentication failed'}), 401
 
 @app.route('/is_logged_in', methods=['GET'])
 def login_check():
+    print(f"debugging: session {session['username']}--------------------------------------------------------------------------------------------")
     if "username" in session:
         return jsonify({'username':session['username'], "logged_in":True}), 200
     else:
-        return jsonify({'message':"no logged user found", "logged_in":False})
+        return jsonify({'username':None, "logged_in":False})
 
 if __name__ == "__main__":
     #app.run() #for production
