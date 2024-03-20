@@ -40,8 +40,9 @@ function LoginForm({getUsername, url}) {
                     body: JSON.stringify({ username, password }),
                 });
                 if (response.ok) {
-                    getUsername(username)  //use the function sent by App (parent component)
-                    console.log(`Get username ok: ${username}`)
+                    const data = await response.json();
+                    console.log(`Get username ok: ${data.username}`)
+                    getUsername(data.username)  //use the function sent by App (parent component)
                 } else {
                     setLoading(false);
                     setRequestStatus("Wrong username or password");

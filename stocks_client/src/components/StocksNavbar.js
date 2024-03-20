@@ -8,22 +8,8 @@ function StocksNavbar({user, logUserOut}) {
     const handleShow = () => setShow(true);
     //this function logs the user out after modal pops up
     async function handleClick(){
-        const logoutUrl = "http://127.0.0.1:5000/logout";  //for development
-        try{    //try to send request:
-            const response = await fetch(logoutUrl, {
-                method: 'POST',
-                credentials: 'include' // Needed for cookies to be included in the request
-            });
-            if (response.ok) {
-                handleClose();
-                logUserOut();
-                console.log(`User successfully logged out`);
-            } else {
-                console.error(`Server error: ${response.status}`);
-            }
-        } catch(error){
-            console.error("Fetch error:", error.message);
-        }
+        handleClose();
+        logUserOut();
     };
     return (
         <Navbar expand="lg">

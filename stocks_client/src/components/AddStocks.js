@@ -75,11 +75,11 @@ function AddStocks({user, innerText, currentValues, changeModif, handleReload}) 
                     }
                 }
             }else{
-                setDisable(true)
-                setAction("Select stock")
+                setDisable(true);
+                setAction("Select stock");
             }
         }else{
-            setAction('Add/Modify Stocks')
+            setAction('Add/Modify Stocks');
         }
     }, [stock, quant]); 
 
@@ -88,7 +88,14 @@ function AddStocks({user, innerText, currentValues, changeModif, handleReload}) 
     };
 
     const handleQuantChange = (event) => {
-        setQuant(parseInt(event.target.value, 10));
+        var newQuant = parseInt(event.target.value, 10);
+        if (newQuant<0){
+            setMessage("Please use positive numbers only");
+            setDisable(true);
+        }else{
+            setQuant(newQuant);
+        }
+        
     };
 
     return(

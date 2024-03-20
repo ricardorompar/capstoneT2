@@ -63,19 +63,24 @@ def get_stock_value(stock: str) -> json:
 
 @app.route("/api/update_user", methods=['POST'])
 def add_stock():
-    data = request.json
-    action = data["action"]
-    user = data['user']
-    symbol = data['symbol']
-    quantity = data['quantity']
-    if action == "modify":
-        md.STOCKS.modify(username=user, symbol=symbol,quantity=quantity)
-    elif action == "remove":
-        md.STOCKS.delete(username=user, symbol=symbol)
-    elif action == "add":
-        md.STOCKS.add(username=user, symbol=symbol, quantity=quantity)
-    print('Modifying with values:',action,user,symbol,quantity)
-    return {'message':'stocks updated successfully'}, 203
+    print("debugging--------------------------------------------------------------------------------------------")
+    try:
+        data = request.json
+        action = data["action"]
+        user = data['user']
+        symbol = data['symbol']
+        quantity = data['quantity']
+        if action == "modify":
+            md.STOCKS.modify(username=user, symbol=symbol,quantity=quantity)
+        elif action == "remove":
+            md.STOCKS.delete(username=user, symbol=symbol)
+        elif action == "add":
+            md.STOCKS.add(username=user, symbol=symbol, quantity=quantity)
+        print('Modifying with values:',action,user,symbol,quantity)
+        return {'message':'stocks updated successfully'}, 203
+    except:
+        print('Error updating user informaton.')
+        return {'message':'error updating user information'}, 400
 
 @app.route("/logout", methods=['POST'])
 def logout():
@@ -89,9 +94,16 @@ def login():
     password = data['password']
     if md.USERS.check(username, cp.hasher(password)):
         session['username'] = username
-        return jsonify({'message': 'Logged in successfully'}), 200
+        return jsonify({'username':session['username'], 'message': 'Logged in successfully'}), 200
     else:
         return jsonify({'message': 'Authentication failed'}), 401
+
+@app.route('/is_logged_in', methods=['GET'])
+def login_check():
+    if "username" in session:
+        return jsonify({'username':session['username'], "logged_in":True}), 200
+    else:
+        return jsonify({'message':"no logged user found", "logged_in":False})
 
 if __name__ == "__main__":
     #app.run() #for production

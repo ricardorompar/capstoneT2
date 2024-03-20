@@ -64,6 +64,9 @@ class STOCKS(db.Model):
             raise Exception("error in stock check")
         
     def add(username, symbol, quantity):
+        print("Add>>>>>")
+        print(username, symbol, quantity)
+        print("<<<<<Add")
         try:
             user = USERS.query.filter_by(USERNAME=username).first()
             if user:
@@ -78,6 +81,9 @@ class STOCKS(db.Model):
             raise Exception("error while adding new stock")
     
     def modify(username, symbol, quantity):
+        print("Modify>>>>>")
+        print(username, symbol, quantity)
+        print("<<<<<Modify")
         try:
             user = USERS.query.filter_by(USERNAME=username).first()
             if user:
@@ -90,15 +96,18 @@ class STOCKS(db.Model):
             raise Exception(f"error modifying stock {symbol} for user {username}")
         
     def delete(username, symbol):
-        # try:
-        user = USERS.query.filter_by(USERNAME=username).first()
-        if user:
-            stock = STOCKS.query.filter_by(USER_ID=user.USER_ID, SYMBOL=symbol).first()
-            db.session.delete(stock)
-            db.session.commit()
-        # except:
-        #     db.session.rollback()
-        #     raise Exception(f"error deleting stock {symbol} for user {username}")
+        print("Delete>>>>>")
+        print(username, symbol)
+        print("<<<<<Delete")
+        try:
+            user = USERS.query.filter_by(USERNAME=username).first()
+            if user:
+                stock = STOCKS.query.filter_by(USER_ID=user.USER_ID, SYMBOL=symbol).first()
+                db.session.delete(stock)
+                db.session.commit()
+        except:
+            db.session.rollback()
+            print(f"Error deleting stock {symbol} for user {username}")
         
 def config_flask_db(app):
     #database setup:

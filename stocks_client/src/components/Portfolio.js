@@ -9,10 +9,6 @@ import StocksList from './StocksList';
 function Portfolio({user, list, changeModif, loading, handleReload, url}) {
     const [selectedStock, setSelectedStock] = useState(null);
     const [selectedInterval, setSelectedInterval] = useState("daily");
-    // this is for the offcanvas:
-    const [show, setShow] = useState(false);
-    const handleClose = () => setShow(false);
-    const handleShow = () => setShow(true);
 
     //This is for showing past values
     const [showPValues, setShowPValues] = useState(false);
@@ -24,7 +20,7 @@ function Portfolio({user, list, changeModif, loading, handleReload, url}) {
     
     return (
         <Container className='d-flex flex-column justify-content-center mt-3 mx-0'>
-            <span className='m-auto' style={{width:'70%', minWidth: '300px', maxWidth:'800px'}}>
+            <span className='m-auto' style={{width:'70%', minWidth: '360px', maxWidth:'800px'}}>
                 {list?( //if the list has loaded:
                     JSON.stringify(list.portfolio)==='{}'?(    //if the portfolio is empty:
                         <Alert variant='secondary' className='p-4'>
