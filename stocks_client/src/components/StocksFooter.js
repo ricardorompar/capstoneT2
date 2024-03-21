@@ -6,7 +6,7 @@ function StocksFooter({setShowAboutModal}) {
         <Container className='w-100'>
             <footer className="d-flex flex-wrap justify-content-between align-items-center py-5 my-5 border-top">
                 <Col className='d-flex align-items-center'>
-                    <a href="/" className="d-flex align-items-center justify-content-end link-body-emphasis text-decoration-none fs-2">
+                    <a href="/index.html" className="d-flex align-items-center justify-content-end link-body-emphasis text-decoration-none fs-2">
                         💸
                     </a>
                     <span className='mb-3 mb-md-0 text-body-secondary'>

@@ -7,8 +7,8 @@ import LoginForm from './components/LoginForm';
 import React, { useState, useEffect } from 'react';
 import AboutModal from './components/AboutModal';
 
-const url = "http://127.0.0.1:5000"; //development
-// const url="https://mcsbt-integration-rickyr.nw.r.appspot.com"
+// const url = "http://127.0.0.1:5000"; //development
+const url="https://mcsbt-integration-rickyr.nw.r.appspot.com"
 
 
 function App() {

@@ -16,11 +16,11 @@ function StocksNavbar({user, logUserOut, setShowAboutModal}) {
     return (
         <Navbar expand="lg">
             <Container expand="lg" className=' pb-3 my-2 border-bottom'>
-                <Navbar.Brand href="#home">💸 Wingy</Navbar.Brand>
+                <Navbar.Brand href="/index.html">💸 Wingy</Navbar.Brand>
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="me-auto">
-                        <Nav.Link href="/">Home</Nav.Link>
+                        <Nav.Link href="/index.html">Home</Nav.Link>    {/*the index.html is very important for deployment. This is my landing page*/}
                         <Nav.Link onClick={aboutClicked}>About</Nav.Link>
                         <NavDropdown title="Info" id="basic-nav-dropdown">
                             <NavDropdown.Item href="https://www.alphavantage.co/documentation/">
