@@ -17,8 +17,6 @@ function App() {
     var userFound = storedUser?true:false; //change to true if theres a stored value and false otherwise.
 
     const [loggedUser, setLoggedUser] = useState(storedUser);
-    //DEBUGGING------------------------------------------------------------------------------------------------------------------------------------------------
-    console.log(`HELLO FROM THE START ${JSON.stringify(loggedUser)}`);
     const [showContent, setShowContent] = useState(userFound);
     const [list, setList] = useState(null);
     const [modification, setModification] = useState(null);
@@ -84,8 +82,7 @@ function App() {
                     body: modification //remember the modification was already jsonified
                 });
                 if (response.ok) {
-                    const data = await response.json()
-
+                    await response.json();
                     loadList(); //if response ok
                 }else{
                     console.log(response)
@@ -97,8 +94,6 @@ function App() {
     };
 
     const loginSuccess = (username) => {
-        //DEBUGGING------------------------------------------------------------------------------------------------------------------------------------------------
-        console.log('HELLO FROM LOGINSUCCESS--------------------', username)
         setShowContent(true);
         setLoggedUser(username);
         localStorage.setItem("storedUser", username);   //i also store in the localstorage to guarantee a persistent session
@@ -125,7 +120,6 @@ function App() {
 
     useEffect(()=>{
         if (showContent){   //this variable changes after login. This way i guarantee that these requests will only be made after login
-            console.log('HELLO FROM MODIFICATION IF--------------------', modification)
             updateUser();   //load list after sending the update request
         }
     }, [modification]);
@@ -161,11 +155,11 @@ function App() {
 
     return (
         <div>
-        <Container>
+        <Container className='p-0'>
             {!showContent ? (
                 <LoginForm getUsername={loginSuccess} url={url}/>
             ):(
-                <Container className='min-vh-100'>
+                <Container className='min-vh-100 p-0'>
                     <StocksNavbar user={loggedUser} logUserOut={logOut} setShowAboutModal={setShowAboutModal}></StocksNavbar>
                     <Portfolio user={loggedUser} list={list} changeModif={changeModif} loading={loading} handleReload={handleReload} url={url}></Portfolio>
                     <AboutModal setShowAboutModal={setShowAboutModal} showAboutModal={showAboutModal}></AboutModal>

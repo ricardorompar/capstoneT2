@@ -55,7 +55,7 @@ function AddStocks({user, innerText, currentValues, changeModif, handleReload}) 
                     }else if (delta>0){
                         setMessage(`This will subtract ${Math.abs(delta)} stocks from ${stock}`)
                         setModification({"action":"modify", "user":user, "symbol":stock, "quantity":quant})
-                    }else if (delta==0){
+                    }else if (delta===0){
                         setDisable(true)
                         setMessage(`This will not change your portfolio`)
                     }

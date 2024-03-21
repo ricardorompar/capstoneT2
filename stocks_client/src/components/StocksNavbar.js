@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { NavDropdown, Container, Navbar, Nav, Button, Modal, Row } from 'react-bootstrap';
+import { NavDropdown, Container, Navbar, Nav, Button, Modal } from 'react-bootstrap';
 
 function StocksNavbar({user, logUserOut, setShowAboutModal}) {
     //Stuff for modal:

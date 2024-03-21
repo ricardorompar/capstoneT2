@@ -1,6 +1,5 @@
+import { useState } from 'react';
 import {Spinner, Alert, Container, Row, Col, Card, Badge} from 'react-bootstrap';
-import React, { useState, useEffect } from 'react';
-import ListComponent from './ListComponent';
 import PastValues from './PastValues';
 import AddStocks from './AddStocks';
 import { PieChart } from '@mui/x-charts/PieChart';
@@ -8,19 +7,14 @@ import StocksList from './StocksList';
 
 function Portfolio({user, list, changeModif, loading, handleReload, url}) {
     const [selectedStock, setSelectedStock] = useState(null);
-    const [selectedInterval, setSelectedInterval] = useState("daily");
-
-    //This is for showing past values
-    const [showPValues, setShowPValues] = useState(false);
-    const [pastData, setPastData] = useState(null);    
 
     const handleSelectStock = (stock) => {
         setSelectedStock(stock);
     }
     
     return (
-        <Container className='d-flex flex-column justify-content-center mt-3 mx-0'>
-            <span className='m-auto' style={{width:'70%', minWidth: '360px', maxWidth:'800px'}}>
+        <Container className='d-flex flex-column justify-content-center mt-3 mx-0 p-0'>
+            <span className='m-auto' style={{width:'70%', minWidth: '370px', maxWidth:'800px'}}>
                 {list?( //if the list has loaded:
                     JSON.stringify(list.portfolio)==='{}'?(    //if the portfolio is empty:
                         <Alert variant='secondary' className='p-4'>
@@ -49,11 +43,11 @@ function Portfolio({user, list, changeModif, loading, handleReload, url}) {
                                             margin={{ top: 10, bottom: 10, left: 10, right:100 }}
                                             slotProps={{
                                                 legend: {
-                                                // direction: 'row',
-                                                itemMarkWidth: 20,
-                                                itemMarkHeight: 2,
-                                                markGap: 5,
-                                                itemGap: 10,
+                                                    //direction: 'row',
+                                                    itemMarkWidth: 15,
+                                                    itemMarkHeight: 5,
+                                                    markGap: 5,
+                                                    itemGap: 10,                                                    
                                                 }
                                             }}
                                             //width={300}
