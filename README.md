@@ -21,7 +21,7 @@ Here are some screenshots of the new version:
 
 ![Untitled](README_src/cap.png)
 
-![Untitled](README_src/cap2.png)
+![Untitled](README_src/capNew.png)
 
 There is no registration feature, however there are two registered users. If anyone's reading while the app is still alive and you need a personalized user, contact me.
 
