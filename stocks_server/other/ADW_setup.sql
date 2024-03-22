@@ -44,6 +44,11 @@ INSERT INTO CAPSTONE.USERS (USERNAME, PASSWORD)
 VALUES ('testUser', '8cb2237d0679ca88db6464eac60da96345513964');    --dont forget: in "production" the password should be hashed. this is hash for '12345'
 commit;
 
+INSERT INTO CAPSTONE.USERS (USERNAME, PASSWORD) 
+VALUES ('newUser', '3978d009748ef54ad6ef7bf851bd55491b1fe6bb');    --this is hash for 'happy'
+commit;
+
+
 --lets get some stocks for this user:
 --remember we dont know the user_id so we have to make a "subquery":
 INSERT INTO CAPSTONE.STOCKS (USER_ID, SYMBOL, QUANTITY)

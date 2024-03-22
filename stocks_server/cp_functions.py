@@ -157,6 +157,6 @@ def get_past_vals(stock:str, interval:str="daily") -> dict:
 
 #for debugging:
 if __name__ == "__main__":
-    print(hasher("12345"))
+    print(hasher("happy"))
     print(check_user("testUser", "1234"))
 #rr
